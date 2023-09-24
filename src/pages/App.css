@@ -1,0 +1,82 @@
+.app-layout {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.app-layout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* padding: 0 50px; */
+  background-color: #fff;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  z-index: 1;
+}
+
+.app-layout-header-menu {
+  flex: auto;
+  min-width: 0;
+  justify-content: center;
+  margin: 0 48px;
+}
+
+.app-layout-header-logo {
+  height: 48px;
+}
+
+.app-layout-content {
+  margin-top: 32px;
+  min-height: 720px;
+  margin-bottom: 16px;
+
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: 16px;
+}
+
+.app-layout-footer {
+  text-align: center;
+  /* background-color: #f0f2f5; */
+  padding-bottom: 32px;
+}
+
+@media (width >=1280px) {
+
+  /* don't display tooltip on the large screen */
+  .app-layout-header-menu-tooltip {
+    display: none;
+  }
+
+  .app-layout-content {
+    max-width: 1280px;
+  }
+}
+
+@media (width < 1280px) {
+  .app-layout-header-menu .ant-menu-item .anticon {
+    font-size: 24px;
+  }
+
+  .app-layout-header-menu .ant-menu-title-content {
+    display: none;
+  }
+}
+
+/* @media (width >=640px) {
+  .app-layout-content {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+} */
+
+/* hide logo when screen is too small */
+@media (width < 640px) {
+  .app-layout-header-logo {
+    display: none;
+  }
+}

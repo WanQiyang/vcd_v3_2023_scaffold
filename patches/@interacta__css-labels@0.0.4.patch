@@ -1,0 +1,121 @@
+diff --git a/dist/css-label.d.ts b/dist/css-label.d.ts
+index 1591a32620f4389a5c5b767392988b7954a9aa6d..7cc7994faf7c99898734fd793771d54a4ff554f8 100644
+--- a/dist/css-label.d.ts
++++ b/dist/css-label.d.ts
+@@ -3,6 +3,7 @@ export declare class CssLabel {
+     element: HTMLDivElement;
+     readonly fontWidthHeightRatio = 0.6;
+     private fontSize;
++    private fontStyle;
+     private container;
+     private x;
+     private y;
+@@ -21,6 +22,7 @@ export declare class CssLabel {
+     setText(text: string): void;
+     setPosition(x: number, y: number): void;
+     setFontSize(fontSize: number): void;
++    setFontStyle(fontStyle: string): void;
+     setColor(color: string): void;
+     resetColor(): void;
+     setOpacity(opacity: number): void;
+diff --git a/dist/css-label.js b/dist/css-label.js
+index 04bfb1d362913466f2d9d58bcaf7e22706e01deb..850a96d115b6f12529fd3c4f4a004c80b819396d 100644
+--- a/dist/css-label.js
++++ b/dist/css-label.js
+@@ -6,6 +6,7 @@ export class CssLabel {
+         this.element = document.createElement('div');
+         this.fontWidthHeightRatio = 0.6;
+         this.fontSize = 14;
++        this.fontStyle = 'normal';
+         this.x = 0;
+         this.y = 0;
+         this.estimatedWidth = 0;
+@@ -43,6 +44,14 @@ export class CssLabel {
+     setFontSize(fontSize) {
+         if (this.fontSize !== fontSize) {
+             this.fontSize = fontSize;
++            this.element.style.fontSize = `${fontSize}px`;
++            this.measureText();
++        }
++    }
++    setFontStyle(fontStyle) {
++        if (this.fontStyle !== fontStyle) {
++            this.fontStyle = fontStyle;
++            this.element.style.fontStyle = fontStyle;
+             this.measureText();
+         }
+     }
+diff --git a/dist/index.js b/dist/index.js
+index c8c06fe2c7af0b84e55969f24ee41bbe63b6039d..aa804100e100103f97802643889d9dd0f117213a 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -25,7 +25,7 @@ export class LabelRenderer {
+         // Add new labels and take into account existing labels
+         const labelsToDelete = new Map(this.cssLabels);
+         labels.forEach(label => {
+-            const { x, y, fontSize, color, text, weight, opacity, shouldBeShown } = label;
++            const { x, y, fontSize, fontStyle, color, text, weight, opacity, shouldBeShown } = label;
+             const exists = labelsToDelete.get(label.id);
+             if (exists) {
+                 labelsToDelete.delete(label.id);
+@@ -43,6 +43,8 @@ export class LabelRenderer {
+                     labelToUpdate.setWeight(weight);
+                 if (fontSize !== undefined)
+                     labelToUpdate.setFontSize(fontSize);
++                if (fontStyle !== undefined)
++                    labelToUpdate.setFontStyle(fontStyle);
+                 if (color !== undefined)
+                     labelToUpdate.setColor(color);
+                 if (this.padding !== undefined)
+diff --git a/dist/styles.js b/dist/styles.js
+index f506162874605d11de1032d0e80d52fa9dd6de5b..ea3c0b266002955e00c3f61de31a8f9644cebaf0 100644
+--- a/dist/styles.js
++++ b/dist/styles.js
+@@ -1,15 +1,14 @@
+ import { css, injectGlobal } from '@emotion/css';
+-export const variables = injectGlobal `
++export const variables = injectGlobal`
+   :root {
+     --css-label-background-color: #1e2428;
+     --css-label-brightness: brightness(150%);
+   }
+ `;
+-export const pointLabel = (padding, pointerEvents) => css `
++export const pointLabel = (padding, pointerEvents) => css`
+   position: absolute;
+   top: 0;
+   left: 0;
+-  font-size: 14px;
+   font-weight: 500;
+   cursor: pointer;
+   user-select: none;
+@@ -23,7 +22,7 @@ export const pointLabel = (padding, pointerEvents) => css `
+   transition: opacity 600ms;
+   opacity: 0;
+ `;
+-export const labelsContainer = css `
++export const labelsContainer = css`
+   transition: opacity 100ms;
+   position: absolute;
+   width: 100%;
+@@ -33,7 +32,7 @@ export const labelsContainer = css `
+   pointer-events: none;
+   opacity: 1;
+ `;
+-export const hidden = css `
++export const hidden = css`
+   opacity: 0;
+ 
+   div {
+diff --git a/dist/types.d.ts b/dist/types.d.ts
+index e4087ef3e359943dc9611c63ad7e45c2928b47ac..c9bc81193b287ca6b8030ef1e86bd05a4736c640 100644
+--- a/dist/types.d.ts
++++ b/dist/types.d.ts
+@@ -11,6 +11,7 @@ export interface LabelOptions {
+     y: number;
+     weight?: number;
+     fontSize?: number;
++    fontStyle?: string;
+     color?: string;
+     opacity?: number;
+     shouldBeShown?: boolean;
